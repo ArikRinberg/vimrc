@@ -1,3 +1,4 @@
+silent! call s:VimEnter(expand("<amatch>"))
 "==========================================================
 if !empty(glob("~/.vim/autoload/pathogen.vim"))
    " Load bundles
@@ -7,6 +8,15 @@ endif
 let mapleader = ","
 "==========================================================
 
+if has("autocmd")
+    " Enable file type detection
+    filetype on
+    augroup my_autocmds
+        autocmd!
+        autocmd InsertEnter * :set number
+        autocmd InsertLeave * :set relativenumber
+  augroup END
+endif
 
 "==========================================================
 " indentLine  settings:
@@ -14,7 +24,11 @@ let mapleader = ","
 
 let g:indentLine_char = '¦'
 let g:indentLine_color_term = 239
+let g:indentLine_enabled = 0
 
+if !empty(glob("~/.vim/bundle/indentLine"))
+    nnoremap <leader>i :IndentLinesToggle<CR>
+endif
 "==========================================================
 " General settings:
 "==========================================================
@@ -41,11 +55,15 @@ set tabstop=4 shiftwidth=4 expandtab
 " Highligh search results
 set hlsearch
 
+" Highlight starting from 81 chars
+highlight OverLength ctermbg=red ctermfg=white guibg=#592929
+match OverLength /\%81v.\+/
+
 " Shortcut to rapidly toggle `set list`
 nnoremap <leader>l :set list!<CR>
 
 "set relativenumber " enables relative numbers
-set number
+set relativenumber
 set numberwidth=1 " numbers offset from leftside
 
 function! SwitchNumber()
@@ -57,7 +75,5 @@ function! SwitchNumber()
 endfunction
 
 nnoremap <leader>n :call SwitchNumber()<CR>
-if !empty(glob("~/.vim/bundle/indentLine"))
-    nnoremap <leader>i :IndentLinesToggle<CR>
-endif
 
+map <Tab>n :tabn<CR>
